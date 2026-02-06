@@ -1,98 +1,257 @@
+# nest-crud
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+<p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+A NestJS CRUD application demonstrating **git-crypt** for transparent file encryption in git repositories. This project showcases best practices for managing sensitive environment files, conventional commits workflow, and production-ready NestJS configuration.
 
-## Project setup
+## Key Features
+
+- **NestJS** with TypeScript
+- **Git-crypt** integration for encrypted .env files
+- **Multi-stage environment configuration** (.env, .env.stage, .env.production)
+- **Production-ready setup** (validation, CORS, graceful shutdown)
+- **Conventional commits** workflow
+- **GPG-based encryption** for team collaboration
+
+## Prerequisites
+
+- Node.js (v18+)
+- npm or yarn
+- git-crypt (https://github.com/AGWA/git-crypt)
+- GPG with a valid key
+
+## Quick Start
+
+### 1. Clone the Repository
 
 ```bash
-$ npm install
+git clone https://github.com/The-Dave-Stack/nest-crud.git
+cd nest-crud
 ```
 
-## Compile and run the project
+### 2. Install Dependencies
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install
 ```
 
-## Run tests
+### 3. Unlock Encrypted Files
+
+After cloning, sensitive files appear encrypted. Unlock them using git-crypt:
 
 ```bash
-# unit tests
-$ npm run test
+# If you have GPG configured with an authorized key
+git-crypt unlock
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+# Or with a symmetric key file (if provided)
+git-crypt unlock /path/to/git-crypt-key
 ```
+
+### 4. Run the Application
+
+```bash
+# Development mode (loads .env)
+npm run start
+
+# Watch mode
+npm run start:dev
+
+# Stage environment (loads .env.stage)
+NODE_ENV=stage npm run start
+
+# Production mode (loads .env.production)
+NODE_ENV=production npm run start:prod
+```
+
+The application will start on `http://localhost:3000`
+
+## Environment Configuration
+
+This project supports multiple environments with dedicated encrypted .env files:
+
+- `.env` - Development environment (default)
+- `.env.stage` - Stage environment
+- `.env.production` - Production environment
+
+Environment files are automatically loaded based on `NODE_ENV`:
+- If `NODE_ENV` is not set or is `development` → loads `.env`
+- If `NODE_ENV=stage` → loads `.env.stage`
+- If `NODE_ENV=production` → loads `.env.production`
+
+## Git-Crypt Setup
+
+### Adding a New Team Member
+
+To grant someone access to encrypted files:
+
+```bash
+# Add a collaborator by email (their GPG key must be in your keyring)
+git-crypt add-gpg-user user@example.com
+
+# Commit the changes
+git add .git-crypt/keys/default/0/*.gpg
+git commit -m "chore: add git-crypt collaborator"
+git push
+```
+
+### Checking Encryption Status
+
+```bash
+# Show encrypted/decrypted status of files
+git-crypt status
+
+# Show all files with encryption status
+git-crypt status -e
+```
+
+### Exporting a Backup Key
+
+```bash
+git-crypt export-key git-crypt-key
+```
+
+⚠️ **Never commit the `git-crypt-key` file to the repository!**
+
+## Development Workflow
+
+This project follows **conventional commits** specification:
+
+```bash
+# Format: <type>: <description>
+git commit -m "feat: add new user authentication"
+git commit -m "fix: resolve database connection issue"
+git commit -m "docs: update README with deployment instructions"
+git commit -m "chore: upgrade dependencies to latest versions"
+```
+
+### Commit Types
+
+- `feat`: New feature
+- `fix`: Bug fix
+- `docs`: Documentation changes
+- `style`: Code style changes (formatting, etc.)
+- `refactor`: Code refactoring
+- `test`: Adding or updating tests
+- `chore`: Maintenance tasks
+
+### Typical Workflow
+
+```bash
+# 1. Create a feature branch
+git checkout -b feature/your-feature
+
+# 2. Make changes and test
+npm run lint
+npm run test
+
+# 3. Commit with conventional commit message
+git add .
+git commit -m "feat: implement user CRUD operations"
+
+# 4. Push and create PR
+git push origin feature/your-feature
+```
+
+## Running Tests
+
+```bash
+# Unit tests
+npm run test
+
+# E2E tests
+npm run test:e2e
+
+# Test coverage
+npm run test:cov
+
+# Watch mode
+npm run test:watch
+```
+
+## Code Quality
+
+```bash
+# Linting
+npm run lint
+
+# Format code
+npm run format
+```
+
+## Project Structure
+
+```
+nest-crud/
+├── src/
+│   ├── config/
+│   │   ├── configuration.ts      # Configuration schema
+│   │   └── env.validation.ts      # Environment validation
+│   ├── app.module.ts              # Root module
+│   ├── main.ts                    # Application entry point
+│   └── ...
+├── test/                          # Test files
+├── .env                           # Development environment (encrypted)
+├── .env.stage                     # Stage environment (encrypted)
+├── .env.production                # Production environment (encrypted)
+├── .gitattributes                 # Git-crypt encryption rules
+├── .git-crypt/                    # Git-crypt keys and config
+├── GIT_CRYPT.md                   # Git-crypt documentation
+├── CLAUDE.md                      # Project guidelines
+└── README.md                      # This file
+```
+
+## Production Features
+
+The application includes production-ready configurations:
+
+- ✅ Global validation pipe with automatic DTO transformation
+- ✅ CORS enabled with configurable origin
+- ✅ Graceful shutdown handling (SIGTERM/SIGINT)
+- ✅ Environment-specific configuration loading
+- ✅ Structured logging
+- ✅ Error handling middleware
 
 ## Deployment
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+When deploying to production:
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+1. Set `NODE_ENV=production` to load `.env.production`
+2. Ensure git-crypt is unlocked on the server
+3. Use `npm run build` to compile TypeScript
+4. Run `npm run start:prod` to start the production server
+
+### Docker Deployment
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+# Using docker-compose
+docker-compose up -d
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+# Or with Docker
+docker build -t nest-crud .
+docker run --env-file .env.production -p 3000:3000 nest-crud
+```
 
 ## Resources
 
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+- [NestJS Documentation](https://docs.nestjs.com)
+- [Git-Crypt GitHub](https://github.com/AGWA/git-crypt)
+- [Conventional Commits](https://www.conventionalcommits.org/)
+- [The Dave Stack](https://thedavestack.com)
 
 ## Support
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+For detailed git-crypt setup instructions, see [GIT_CRYPT.md](GIT_CRYPT.md).
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project is **UNLICENSED** - proprietary software.
+
+## Author
+
+- **David López Felguera** - [The Dave Stack](https://thedavestack.com)
