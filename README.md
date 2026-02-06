@@ -250,7 +250,9 @@ For detailed git-crypt setup instructions, see [GIT_CRYPT.md](GIT_CRYPT.md).
 
 ## License
 
-This project is **UNLICENSED** - proprietary software.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+Copyright (c) 2026 David López Felguera - [The Dave Stack](https://thedavestack.com)
 
 ## Author
 
