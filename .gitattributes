@@ -1,0 +1,19 @@
+# Git-crypt encryption rules
+# These files will be encrypted when committed and decrypted when checked out
+
+# Environment files
+.env* filter=git-crypt diff=git-crypt
+
+# SSL certificates and keys
+*.key filter=git-crypt diff=git-crypt
+*.pem filter=git-crypt diff=git-crypt
+*.p12 filter=git-crypt diff=git-crypt
+*.pfx filter=git-crypt diff=git-crypt
+
+# Secrets directory
+secrets/** filter=git-crypt diff=git-crypt
+
+# Exclude these files from encryption (git-crypt metadata and git files)
+.gitattributes !filter !diff
+.git-crypt/** !filter !diff
+.gitignore !filter !diff
